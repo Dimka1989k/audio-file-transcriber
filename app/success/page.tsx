@@ -1,38 +1,33 @@
 import { redirect } from "next/navigation";
 import { stripe } from "../../lib/stripe";
 
-interface SuccessPageProps {
+export default async function SuccessPage({
+  searchParams,
+}: {
   searchParams: { session_id?: string };
-}
-
-export default async function SuccessPage({ searchParams }: SuccessPageProps) {
+}) {
   const session_id = searchParams.session_id;
 
   if (!session_id) {
-    throw new Error("Missing session_id in searchParams");
-  }
-
-  const { status, customer_details } = await stripe.checkout.sessions.retrieve(session_id, {
-    expand: ["line_items", "payment_intent"],
-  });
-
-  const customerEmail = customer_details?.email ?? "Unknown email";
-
-  if (status === "open") {
     redirect("/");
   }
 
-  if (status === "complete") {
-    return (
-      <section id="success">
-        <p>
-          We appreciate your business! A confirmation email will be sent to {customerEmail}.
-          If you have any questions, please email
-        </p>
-        <a href="mailto:orders@example.com">orders@example.com</a>.
-      </section>
-    );
-  }
+  const session = await stripe.checkout.sessions.retrieve(session_id, {
+    expand: ["line_items", "payment_intent"],
+  });
 
-  return null;
+  const customerEmail = session.customer_details?.email ?? "Unknown email";
+
+  return (
+    <section id="success" className="p-8">
+      <p>
+        ✅ Thank you for your purchase! A confirmation email will be sent to{" "}
+        <strong>{customerEmail}</strong>.
+      </p>
+      <p>
+        If you have any questions, contact us at{" "}
+        <a href="mailto:orders@example.com">orders@example.com</a>.
+      </p>
+    </section>
+  );
 }
