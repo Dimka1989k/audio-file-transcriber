@@ -132,7 +132,7 @@ export default function HomePage() {
 
     <SignedIn>
       <div className="flex min-h-screen w-full">       
-        <aside className="w-80 bg-white p-4 shadow overflow-y-auto">
+        <aside className="w-80 bg-white p-4 overflow-y-auto">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">Your Past Transcriptions</h2>
           {history.length === 0 ? (
             <p className="text-gray-500">No transcriptions yet.</p>
