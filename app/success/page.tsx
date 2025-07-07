@@ -1,17 +1,15 @@
 import { redirect } from "next/navigation";
 import { stripe } from "../../lib/stripe";
 
-interface SuccessPageProps {
-  searchParams: Record<string, string | string[] | undefined>;
-}
-
-export default async function Success({ searchParams }: SuccessPageProps) {
-  const session_id = Array.isArray(searchParams.session_id)
-    ? searchParams.session_id[0]
-    : searchParams.session_id;
+export default async function SuccessPage({
+  searchParams,
+}: {
+  searchParams: { session_id?: string };
+}) {
+  const session_id = searchParams.session_id;
 
   if (!session_id) {
-    throw new Error("Please provide a valid session_id (`cs_test_...`)");
+    throw new Error("Missing session_id in searchParams");
   }
 
   const {
